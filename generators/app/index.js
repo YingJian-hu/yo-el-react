@@ -9,18 +9,8 @@ module.exports = class extends Generator {
       super(args, opts);
     }
 
-    async prompting() {
-      this.answers = await this.prompt([
-        {
-          type: "input",
-          name: "name",
-          message: "Your project name",
-          default: this.appname
-        }
-      ])
-    };
-
-    initPackage() {
+    //  获取当前项目状态，获取基本配置参数等
+    initianlizing() {
       const pkgJson = {
         "name": this.answers.name,
         "version": "1.0.0",
@@ -38,40 +28,44 @@ module.exports = class extends Generator {
   
       // Extend or create package.json file in destination path
       this.fs.extendJSON(this.destinationPath('package.json'), pkgJson);
+    }
+
+    //  向用户展示交互式问题收集关键参数
+    async prompting() {
+      this.answers = await this.prompt([
+        {
+          type: "input",
+          name: "name",
+          message: "Your project name",
+          default: this.appname
+        }
+      ])
+    };
+
+    //  保存配置相关信息且生成配置文件（名称多为'.'开头的配置文件）  
+    configuring() {
+      this.fs.copyTpl(
+        this.sourceRoot(),
+        this.destinationRoot(),
+        { appname: this.answers.name }
+      )
+    }
+
+    //  未匹配任何生命周期方法的非私有方法均在此环节*自动*执行
+    default() {}
+
+    //  依据模板进行新项目结构的写操作
+    writing() {
+      var htmlTpl = this.fs.read(this.templatePath('./app/build/views/index.html'));
+      this.fs.write(this.destinationPath('./app/build/views/index.html'), htmlTpl.replace(/&lt/g, '<').replace(/&gt/g, '>'));
+    }
+
+    //  依赖安装
+    install() {
       this.npmInstall(['react', 'react-dom'], {'save-dev': false});
-      this.npmInstall(['@babel/core', 'babel-loader', '@babel/preset-react', '@babel/preset-env', 'css-loader', 'extract-text-webpack-plugin@next', 'html-webpack-plugin', 'webpack'], {'save-dev': true})
+      this.npmInstall(['@babel/core', 'babel-loader', '@babel/preset-react', '@babel/preset-env', 'css-loader@3.4.2', 'style-loader', 'extract-text-webpack-plugin@next', 'html-webpack-plugin', 'webpack@4.1.0', 'webpack-cli'], {'save-dev': true})
     }
-    
-    async copyFiles() {
-      //  webpack.config.js
-      this.fs.copyTpl(
-        this.templatePath('webpack.config.js'),
-        this.destinationPath('webpack.config.js'),
-      )
 
-      //  .gitignore
-      this.fs.copyTpl(
-        this.templatePath('.gitignore'),
-        this.destinationPath('.gitignore'),
-      )
-
-      //  index.jsx
-      this.fs.copyTpl(
-        this.templatePath('./app/build/index.jsx'),
-        this.destinationPath('/app/build/index.jsx'),
-      )
-
-      //  main.less
-      this.fs.copyTpl(
-        this.templatePath('./app/build/style/main.less'),
-        this.destinationPath('/app/build/style/main.less'),
-      )
-
-       //  index.html
-       this.fs.copyTpl(
-        this.templatePath('./app/build/views/index.html'),
-        this.destinationPath('/app/build/views/index.html'),
-        { title: this.answers.name }
-      );
-    }
+    //  结束动作，如清屏，输出结束信息等
+    end() {}
   };

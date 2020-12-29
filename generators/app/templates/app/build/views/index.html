@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>reactdeom</title>
+  &lt% for (let css in htmlWebpackPlugin.files.css) { %&gt
+    <link rel="stylesheet" type="text/css" href="&lt%= htmlWebpackPlugin.files.css[css] %&gt" />
+    &lt% } %&gt
 </head>
 <body>
     <div id="app"></div>
     &lt% for (let js in htmlWebpackPlugin.files.js) { %&gt
       <script type="text/javascript" src="&lt%= htmlWebpackPlugin.files.js[js] %&gt"></script>
     &lt% } %&gt
-   
 </body>
-
 </html>

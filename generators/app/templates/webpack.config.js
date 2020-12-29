@@ -5,12 +5,13 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractLESS = new ExtractTextPlugin('app.[contenthash:8].css');
 
 module.exports = {
-    entry: "./index.jsx",
+    entry: "./app/build/index.jsx",
     output: {
-        path: path.resolve(__dirname, './public/static/'),
+        path: path.resolve(__dirname, './app/public/static/'),
         filename: 'app.[chunkhash:8].js',
     },
     devtool: 'cheap-module-source-map',
+    mode: 'development',
     module: {
         rules: [
             {
@@ -43,8 +44,8 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             inject: false,
-            filename: './index.html',
-            template: './index.html'
+            filename: '../views/index.html',
+            template: './app/build/views/index.html'
         }),
         extractLESS
     ]
