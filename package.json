@@ -1,10 +1,9 @@
 {
-  "name": "generator-rc",
-  "version": "1.0.0",
+  "name": "generator-el-react",
+  "version": "1.0.1",
   "description": "",
   "main": "generators/app/index.js",
   "scripts": {
-    "yo-react": "yo start-react",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
